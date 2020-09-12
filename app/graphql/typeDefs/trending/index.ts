@@ -8,11 +8,27 @@ const types = gql`
             languages: [String]
             spokenLanguages: [String]
             since: String
-        ): TRENDING_RESULT
+        ): [REPOSITORIES]
     }
 
-    type TRENDING_RESULT {
+    type REPOSITORIES {
+        author: String
         name: String
+        avatar: String
+        url: String
+        description: String
+        language: String
+        languageColor: String
+        stars: Int
+        forks: Int
+        currentPeriodStars: Int
+        contributors: [CONTRIBUTORS]
+    }
+
+    type CONTRIBUTORS {
+        herf: String
+        avatar: String
+        username: String
     }
 `
 

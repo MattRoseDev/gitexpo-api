@@ -21,9 +21,6 @@ module.exports = class Application {
             console.log(
                 `🚀 Server ready at http://localhost:${config.port}${server.graphqlPath}`,
             )
-            console.log(
-                `🚀 Subscriptions ready at ws://localhost:${config.port}${server.subscriptionsPath}`,
-            )
         })
     }
     // EXPRESS

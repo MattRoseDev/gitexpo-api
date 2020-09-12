@@ -1,9 +1,9 @@
+import Trending, { ArgsType } from 'app/controllers/trending'
+
 const resolvers = {
     Query: {
-        trending: () => {
-            return {
-                name: 'repo name',
-            }
+        trending: async (_: any, args: ArgsType) => {
+            return await Trending.trending(args)
         },
     },
 }
