@@ -1,10 +1,16 @@
 import cheerio from 'cheerio'
 import fetch, { Response } from 'node-fetch'
-import { omitBy, isNil } from 'lodash'
+import { omitBy, isNil, sortBy } from 'lodash'
 
 export interface ArgsType {
     languages: string[]
-    spokenLanguages: string[]
+    spokenLanguage: string
+    since: string
+}
+
+export interface ArgType {
+    language: string
+    spokenLanguage: string
     since: string
 }
 
@@ -26,13 +32,48 @@ class Trending {
     }
 
     async trending(args: ArgsType) {
-        const language: string =
-            args.languages && args.languages.length > 0 ? args.languages[0] : ''
-        const spokenLanguage: string =
-            args.spokenLanguages && args.spokenLanguages.length > 0
-                ? args.spokenLanguages[0]
-                : ''
-        const url: string = `${this.GITHUB_URL}/trending/${language}?since=${args.since}&spoken_language_code=${spokenLanguage}`
+        const languages: string[] =
+            args.languages && args.languages.length > 0 ? args.languages : []
+        const spokenLanguage: string = args.spokenLanguage
+            ? args.spokenLanguage
+            : ''
+
+        let response: any[] = []
+
+        if (languages.length > 1) {
+            for (let i = 0; i < languages.length; i++) {
+                let repositories = await this.getRepositories({
+                    language: languages[i],
+                    spokenLanguage,
+                    since: args.since,
+                })
+
+                response.push(...repositories)
+
+                if (i == languages.length - 1) {
+                    response = sortBy(response, ['stars']).reverse()
+                    return response
+                }
+            }
+        } else {
+            response = await this.getRepositories({
+                language: languages.length > 0 ? languages[0] : '',
+                spokenLanguage,
+                since: args.since,
+            })
+
+            return response
+        }
+
+        return []
+    }
+
+    async getRepositories(arg: ArgType) {
+        const language: string = arg.language ? arg.language : ''
+        const spokenLanguage: string = arg.spokenLanguage
+            ? arg.spokenLanguage
+            : ''
+        const url: string = `${this.GITHUB_URL}/trending/${language}?since=${arg.since}&spoken_language_code=${spokenLanguage}`
         const data: Response = await fetch(url)
         const $ = cheerio.load(await data.text())
 

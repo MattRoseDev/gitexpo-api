@@ -6,7 +6,7 @@ const types = gql`
     type Query {
         trending(
             languages: [String]
-            spokenLanguages: [String]
+            spokenLanguage: [String]
             since: String
         ): [REPOSITORIES]
     }
@@ -26,7 +26,7 @@ const types = gql`
     }
 
     type CONTRIBUTORS {
-        herf: String
+        href: String
         avatar: String
         username: String
     }
