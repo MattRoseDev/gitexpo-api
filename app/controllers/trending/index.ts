@@ -19,11 +19,12 @@ class Trending {
     constructor() {
         this.GITHUB_URL = 'https://github.com'
     }
-
+    // Remove Nil object
     omitNil(object: any) {
         return omitBy(object, isNil)
     }
 
+    // extract address avatar
     removeDefaultAvatarSize(src: any) {
         if (!src) {
             return src
@@ -41,7 +42,9 @@ class Trending {
         let response: any[] = []
 
         if (languages.length > 1) {
+            // several languages
             for (let i = 0; i < languages.length; i++) {
+                // fetch repositories
                 let repositories = await this.getRepositories({
                     language: languages[i],
                     spokenLanguage,
@@ -51,11 +54,13 @@ class Trending {
                 response.push(...repositories)
 
                 if (i == languages.length - 1) {
+                    // sort repositories by stars
                     response = sortBy(response, ['stars']).reverse()
                     return response
                 }
             }
         } else {
+            // only one language
             response = await this.getRepositories({
                 language: languages.length > 0 ? languages[0] : '',
                 spokenLanguage,
@@ -73,25 +78,32 @@ class Trending {
         const spokenLanguage: string = arg.spokenLanguage
             ? arg.spokenLanguage
             : ''
+        // github trending address
         const url: string = `${this.GITHUB_URL}/trending/${language}?since=${arg.since}&spoken_language_code=${spokenLanguage}`
+        // fetch html page
         const data: Response = await fetch(url)
+        // load data to cheero for extract data
         const $ = cheerio.load(await data.text())
 
         return $('.Box article.Box-row')
             .get()
             .map(repo => {
                 const $repo: Cheerio = $(repo)
+                // extract title
                 const title: string = $repo.find('.h3').text().trim()
+                // extract username & reponame
                 const [username, repoName]: string[] = title
                     .split('/')
                     .map(v => v.trim())
+                // extract url repo
                 const relativeUrl: string | undefined = $repo
                     .find('.h3')
                     .find('a')
                     .attr('href')
+                // extract current period stars
                 const currentPeriodStarsString: string =
                     $repo.find('.float-sm-right').text().trim() || ''
-
+                // extract contributors
                 const contributors: string[] = $repo
                     .find('span:contains("Built by")')
                     .find('[data-hovercard-type="user"]')
@@ -105,12 +117,12 @@ class Trending {
                         }
                     })
                     .get()
-
+                // extract language color
                 const colorNode: Cheerio = $repo.find('.repo-language-color')
                 const langColor: string | null = colorNode.length
                     ? colorNode.css('background-color')
                     : null
-
+                // extract language
                 const langNode: Cheerio = $repo.find(
                     '[itemprop=programmingLanguage]',
                 )
@@ -119,6 +131,7 @@ class Trending {
                     ? langNode.text().trim()
                     : null
 
+                // return extracted information of repositories
                 return this.omitNil({
                     author: username,
                     name: repoName,

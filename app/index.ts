@@ -16,7 +16,6 @@ module.exports = class Application {
     serverConfig() {
         server.applyMiddleware({ app, path: '/graphql' })
         const httpServer = createServer(app)
-        server.installSubscriptionHandlers(httpServer)
         httpServer.listen({ port: config.port }, () => {
             console.log(
                 `🚀 Server ready at http://localhost:${config.port}${server.graphqlPath}`,
