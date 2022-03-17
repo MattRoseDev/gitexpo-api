@@ -1,9 +1,9 @@
 export interface ConfigType {
-    port: number
+    port: string
 }
 
 const config: ConfigType = {
-    port: 8000,
+    port: process.env.PORT || '8080',
 }
 
 export default config
