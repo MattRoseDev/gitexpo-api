@@ -26,6 +26,7 @@
     "merge-graphql-schemas": "^1.7.8",
     "node-fetch": "^2.6.1",
     "nodemon": "^2.0.4",
+    "ts-node": "^10.7.0",
     "type-graphql": "^1.0.0"
   },
   "devDependencies": {
@@ -34,7 +35,6 @@
     "@types/node": "^14.6.4",
     "husky": "^4.3.0",
     "prettier": "^2.1.1",
-    "ts-node": "^9.0.0",
     "typescript": "^4.0.2"
   }
 }
